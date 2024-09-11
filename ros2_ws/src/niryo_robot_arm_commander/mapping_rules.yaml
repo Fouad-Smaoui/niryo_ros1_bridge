@@ -1,0 +1,8 @@
+-
+  ros1_package_name: 'niryo_robot_arm_commander'
+  ros2_package_name: 'niryo_robot_arm_commander'
+-
+  ros1_package_name: 'niryo_robot_arm_commander'
+  ros1_action_name: 'RobotMove'
+  ros2_package_name: 'niryo_robot_arm_commander'
+  ros2_action_name: 'RobotMove'

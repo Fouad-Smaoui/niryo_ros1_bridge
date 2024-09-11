@@ -1,0 +1,3 @@
+-
+  ros1_package_name: 'ttl_driver'
+  ros2_package_name: 'ttl_driver'

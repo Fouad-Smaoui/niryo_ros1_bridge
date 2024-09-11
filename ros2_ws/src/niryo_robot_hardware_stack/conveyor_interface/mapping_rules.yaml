@@ -1,0 +1,3 @@
+-
+  ros1_package_name: 'conveyor_interface'
+  ros2_package_name: 'conveyor_interface'

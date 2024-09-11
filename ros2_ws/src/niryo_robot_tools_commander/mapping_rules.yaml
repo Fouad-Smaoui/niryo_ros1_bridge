@@ -1,0 +1,8 @@
+-
+  ros1_package_name: 'niryo_robot_tools_commander'
+  ros2_package_name: 'niryo_robot_tools_commander'
+-
+  ros1_package_name: 'niryo_robot_tools_commander'
+  ros1_action_name: 'Tool'
+  ros2_package_name: 'niryo_robot_tools_commander'
+  ros2_action_name: 'Tool'

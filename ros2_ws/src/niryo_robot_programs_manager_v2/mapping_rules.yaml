@@ -1,0 +1,8 @@
+-
+  ros1_package_name: 'niryo_robot_programs_manager_v2'
+  ros2_package_name: 'niryo_robot_programs_manager_v2'
+-
+  ros1_package_name: 'niryo_robot_programs_manager_v2'
+  ros1_action_name: 'ExecuteProgram'
+  ros2_package_name: 'niryo_robot_programs_manager_v2'
+  ros2_action_name: 'ExecuteProgram'

@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<?xml-model
+  href="http://download.ros.org/schema/package_format3.xsd"
+  schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>niryo_robot_program_player</name>
+  <version>5.5.0</version>
+  <description>Provides an interface for the button box on serial bus</description>
+  <maintainer email="t.degallaix@niryo.com">Thomas Degallaix</maintainer>
+  <license>GPLv3</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <depend>std_msgs</depend>
+  <depend>niryo_robot_msgs</depend>
+  <depend>niryo_robot_programs_manager_v2</depend>
+  <depend>niryo_robot_database</depend>
+
+  <buildtool_depend>rosidl_default_generators</buildtool_depend>
+  <exec_depend>rosidl_default_runtime</exec_depend>
+  <member_of_group>rosidl_interface_packages</member_of_group>
+
+  <!-- Export the build type -->
+  <export>
+    <build_type>ament_cmake</build_type>
+    <ros1_bridge mapping_rules="mapping_rules.yaml"/>
+  </export>
+
+</package>
