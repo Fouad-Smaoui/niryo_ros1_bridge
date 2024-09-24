@@ -100,3 +100,6 @@ RUN source /niryo_msgs_definition/install/setup.bash; \
     git checkout action_bridge_humble; \
     cd ../..; \
     time colcon build --cmake-force-configure --event-handlers console_direct+
+
+COPY bridge_entrypoint.sh bridge_entrypoint.sh
+ENTRYPOINT [ "/bridge_entrypoint.sh" ]
