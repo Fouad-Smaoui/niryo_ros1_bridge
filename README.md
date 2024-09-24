@@ -15,12 +15,15 @@ EC2 password: **robotics**
 1. Go to the [AWS EC2 console](https://eu-west-3.console.aws.amazon.com/ec2/home?region=eu-west-3#Instances:instanceId=i-0c22e6c2d748bb208) and start the instance (name -> **POC_ros1_bridge**, instance ID -> **i-0c22e6c2d748bb208**)
 2. Connect to the running instance (user = niryo) using ssh (If you don't have your computer set in the `authorized_key` of the server, you will need to use the `ec2-cross_compilation.pem` key)
 ```ssh -i ec2-cross_compilation.pem niryo@<ec2_ip_public_dns>```
+
 **NB:** If for some reasons, you can't connect to the EC2 because of restricted permissions, you can try to change the rights on the key to give you read-only access:
 ```chmod 400 ec2-cross_compilation.pem```
+
 3. Go to the `niryo_ros1_bridge` folder
 ```cd git/niryo_ros1_bridge/```
 4. Run the build script
 ```./build_img.sh --push```
+
 The `--push` argument will automatically register the built image on https://gitlab01.niryotech.com/robot/ned/niryo_ros1_bridge/container_registry for faster deployment via `docker pull`
 
 ## Deploy the bridge on the robot
@@ -50,7 +53,7 @@ colcon build
 ## Test
 
 1. Open a terminal and source the niryo_bridge_interfaces install files
-```source <your_ros2_workspace_path>/install.setup.bash```
+```source <your_ros2_workspace_path>/install/setup.bash```
 2. Make sure your robot is running and is on the same network than your computer
 3. Try to move the robot:
 ```
