@@ -2,7 +2,7 @@
 
 set -e
 
-DOCKER_REGISTRY_URL=gitlab01.niryotech.com:5050/robot/ned/niryo_ros1_bridge
+DOCKER_REGISTRY_URL=ghcr.io/niryorobotics
 DOCKER_IMAGE_NAME=ros1_bridge
 DOCKER_TAG=latest
 
