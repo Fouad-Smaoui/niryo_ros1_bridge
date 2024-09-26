@@ -57,12 +57,12 @@ install() {
 
 start_container() {
     echo "Starting ros1_bridge container..."
-    sudo docker run -d -e ROS_DOMAIN_ID="${ROS_DOMAIN_ID}"--restart unless-stopped --net=host --pid=host --ipc=host "${DOCKER_CONTAINER_NAME}"
+    sudo docker run -d -e ROS_DOMAIN_ID="${ROS_DOMAIN_ID}" --restart unless-stopped --net=host --pid=host --ipc=host "${DOCKER_CONTAINER_NAME}"
 }
 
 stop_container() {
     echo "Stopping ros1_bridge container..."
-    sudo docker stop "$(docker ps -q --filter ancestor="${DOCKER_CONTAINER_NAME}")"
+    sudo docker stop "$(sudo docker container ls  | grep "${DOCKER_CONTAINER_NAME}" | awk '{print $1}')"
 }
 
 
