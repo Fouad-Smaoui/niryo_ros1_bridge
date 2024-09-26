@@ -6,57 +6,99 @@ On the remote PC side, this consists of a ROS2 package containing the definition
 
 [The current official bridge](https://github.com/ros2/ros1_bridge) only supports ROS topics and interfaces. To also support actions, we currently use 2 forks, [one from the official branch](https://github.com/hsd-dev/ros1_bridge/tree/action_bridge) which enable bridging actions and [another one](https://github.com/smith-doug/ros1_bridge/tree/action_bridge_humble) from this branch which fixes a build error with ROS2 humble (See [this issue](https://github.com/ros2/ros1_bridge/issues/403) on Github).
 
-## Build the bridge
+## Content of the repository
 
-As the bridge takes an extremely long time to build on a standard PC, we decided to build it and generate the docker image exclusively on a high-performance AWS EC2 server (this reduces the build time from several hours to around ten minutes).
+- `niryo_msgs_definition` -> Packages containing ROS1 definitions of Niryo robot's interfaces
+- `ros2_ws` -> A ROS2 workspace containing ROS2 definitions of Niryo robot's interfaces
+- `bridge.conf` -> A config file with parameters to configure how to deploy the ros1_bridge docker container
+- `build_img.sh` -> Helper script to build the docker image and push it to the Github Docker registry. Don't use it, we built the image and stored it in our Github docker regsitry to save you (a lot) of time
+- `Dockerfile` -> The dockerfile used to build the image
+- `bridge_entrypoint.sh` -> The docker image entrypoint
+- `deploy_bridge.sh` -> A helper script to help you install and deploy the ros1_bridge docker image
 
-EC2 password: **robotics**
+## The deployment script deploy_bridge.sh
 
-1. Go to the [AWS EC2 console](https://eu-west-3.console.aws.amazon.com/ec2/home?region=eu-west-3#Instances:instanceId=i-0c22e6c2d748bb208) and start the instance (name -> **POC_ros1_bridge**, instance ID -> **i-0c22e6c2d748bb208**)
-2. Connect to the running instance (user = niryo) using ssh (If you don't have your computer set in the `authorized_key` of the server, you will need to use the `ec2-cross_compilation.pem` key)
-```ssh -i ec2-cross_compilation.pem niryo@<ec2_ip_public_dns>```
+#### Description
 
-**NB:** If for some reasons, you can't connect to the EC2 because of restricted permissions, you can try to change the rights on the key to give you read-only access:
-```chmod 400 ec2-cross_compilation.pem```
+This bash script automates the process of installing Docker (if it's not already installed), and managing a Docker container for Niryo's ros1_bridge. It supports deploying, starting, stopping, and restarting the container, which facilitates communication between ROS (Robot Operating System) versions.
 
-3. Go to the `niryo_ros1_bridge` folder
-```cd git/niryo_ros1_bridge/```
-4. Run the build script
-```./build_img.sh --push```
+#### How to Use It
 
-The `--push` argument will automatically register the built image on https://gitlab01.niryotech.com/robot/ned/niryo_ros1_bridge/container_registry for faster deployment via `docker pull`
+The script supports several commands to interact with the Docker container for ros1_bridge. The usage is as follows:
+
+```bash
+./script_name [command]
+```
+
+#### Available Commands
+
+    **install**
+        Installs Docker if it is not already installed.
+        Pulls the Docker image for Niryo's ros1_bridge based on the configuration in bridge.conf.
+
+    **start**
+        Starts the ros1_bridge Docker container with appropriate environment settings and configurations.
+
+    **stop**
+        Stops the currently running ros1_bridge container.
+
+    **restart**
+        Stops the running container and restarts it.
+
+    **-h** or **--help**
+        Shows the help message describing the usage and available commands.
+
+#### Configuration
+
+The script loads the Docker container name and other configurations from a bridge.conf file located in the same directory. This file should define at least the following variables:
+
+    DOCKER_REGISTRY_URL: URL for the Docker registry. **Don't modify it.**
+    DOCKER_TAG: The tag (version) of the container. **Don't modify it.**
+    ROS_DOMAIN_ID: The ROS domain ID used for communication.
 
 ## Deploy the bridge on the robot
 
-1. Install docker on the robot following [this guide](https://docs.docker.com/engine/install/ubuntu/#install-using-the-repository)
-2. Login to docker registry (Enter your gitlab username and password when asked):
-```sudo docker login gitlab01.niryotech.com:5050```
-3. Pull the image from the gitlab registry:
-```sudo docker pull gitlab01.niryotech.com:5050/robot/ned/niryo_ros1_bridge/ros1_bridge:latest```
-
-## Run the bridge image on the robot
-
-In order to run in interactive mode (in a shell), type:
-```sudo docker run -it --rm  --net=host --pid=host --ipc=host gitlab01.niryotech.com:5050/robot/ned/niryo_ros1_bridge/ros1_bridge:latest```
-
-
-## Install Niryo's ROS2 message definitions on remote computer
-
-1. Make sure ROS2 humble is installed on your computer with ubuntu. If not, install it following [this tutorial](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html).
-2. Clone the niryo_bridge_interfaces package in a ROS2 workspace and build it:
+1. Open a terminal and ssh to your robot:
+```ssh niryo@<ROBOT_IP>```
+2. Clone the niryo_ros1_bridge repository:
+```git clone https://github.com/NiryoRobotics/niryo_ros1_bridge```
+3. Before running the docker container, you can configure the [ROS_DOMAIN_ID](https://docs.ros.org/en/humble/Concepts/Intermediate/About-Domain-ID.html) used by ROS2 and DDS to enable node discovery between nodes in the same domain. By default, it is set to 0 (default `ROS_DOMAIN_ID` is always 0). You can change the `ROS_DOMAIN_ID` by editing the file `bridge.conf` located in the repository
+4. Install docker and pull the image using the deployment script:
+```bash
+./deploy_bridge.sh install
 ```
-git clone TODO
-cd <your_ros2_workspace_path>
+5. Once installed, start the docker container. After being started, it should automatically start after each reboot of the robot:
+```bash
+./deploy_bridge.sh start
+```
+6. Your robot is now setup with ROS2 interfaces
+
+## Install Niryo's ROS2 interfaces packages on your remote computer
+
+Now that your robot is set up, you can install the ros2 message definition for niryo robots.
+
+1. Open a terminal on your remote computer and clone the repository:
+```git clone https://github.com/NiryoRobotics/niryo_ros1_bridge```
+2. Make sure you have ROS2 humble installed on your computer. If not, install it following [this tutorial](https://docs.ros.org/en/humble/Installation/Ubuntu-Install-Debs.html)
+3. Build the ROS2 niryo interface packages
+```bash
+source /opt/ros/humble/setup.bash
+cd <path-to-folder>/niryo_ros1_bridge/ros2_ws
 colcon build
 ```
+4. Your computer is ready to communicate with the robot using ROS2
 
 ## Test
 
-1. Open a terminal and source the niryo_bridge_interfaces install files
-```source <your_ros2_workspace_path>/install/setup.bash```
+1. Open a terminal on your remote computer with the Niryo's ROS2 interfaces packages installed and source the workspace
+```source <path-to-folder>/niryo_ros1_bridge/ros2_ws/install/setup.bash```
 2. Make sure your robot is running and is on the same network than your computer
-3. Try to move the robot:
+3. If you changed the default `ROS_DOMAIN_ID` on the robot, make sure to do the same on your remote computer
+```bash
+export ROS_DOMAIN_ID=<value>
 ```
+4. Try to move the robot by calling the move action server:
+```bash
 ros2 action send_goal /niryo_robot_arm_commander/robot_action niryo_robot_arm_commander/action/RobotMove 'cmd:
   cmd_type: 0
   tcp_version: 0
@@ -90,11 +132,3 @@ ros2 action send_goal /niryo_robot_arm_commander/robot_action niryo_robot_arm_co
   args: []'
 ```
 The robot should make a right angle with it shoulder joint.
-
-## Sources
-
-- https://github.com/ros2/ros1_bridge
-- https://github.com/TommyChangUMD/ros-humble-ros1-bridge-builder
-- https://docs.ros.org/en/humble/How-To-Guides/Using-ros1_bridge-Jammy-upstream.html
-- https://github.com/hsd-dev/ros1_bridge/tree/action_bridge
-- https://github.com/smith-doug/ros1_bridge/tree/action_bridge_humble
