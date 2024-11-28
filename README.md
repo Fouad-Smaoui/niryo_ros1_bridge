@@ -27,7 +27,7 @@ This bash script automates the process of installing Docker (if it's not already
 The script supports several commands to interact with the Docker container for ros1_bridge. The usage is as follows:
 
 ```bash
-./script_name [command]
+./deploy_bridge.sh [command]
 ```
 
 #### Available Commands
