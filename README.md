@@ -1,4 +1,4 @@
-# niryo_ros1_bridge
+# niryo_ros1_bridge (BETA)
 
 The purpose of the bridge is to enable interfacing between the robot's ROS1 noetic stack and systems using ROS2 humble. It is deployed on the robot in the form of a docker image containing the ros1_bridge build package from source as well as a definition of the messages in the ROS1 stack, its equivalence in ROS2 and a set of mapping rules to facilitate the interface between the 2.
 
