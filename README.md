@@ -1,5 +1,14 @@
 # niryo_ros1_bridge (BETA)
 
+## 🚧 Beta Release 🚧
+
+This repository is currently in **beta**, and we’re actively working to improve it.  
+We welcome your feedback, suggestions, and contributions! If you encounter any issues, have ideas for enhancements, or simply want to share your thoughts, feel free contact us or open an issue for example.  
+
+Your input will help us make this project better for everyone. Thank you for supporting our beta phase!
+
+## About
+
 The purpose of the bridge is to enable interfacing between the robot's ROS1 noetic stack and systems using ROS2 humble. It is deployed on the robot in the form of a docker image containing the ros1_bridge build package from source as well as a definition of the messages in the ROS1 stack, its equivalence in ROS2 and a set of mapping rules to facilitate the interface between the 2.
 
 On the remote PC side, this consists of a ROS2 package containing the definition of the robot's ROS2 interfaces to be built on the remote system running the humble ROS2 distribution.
